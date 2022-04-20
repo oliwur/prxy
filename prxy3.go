@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"strconv"
 )
 
@@ -16,9 +17,9 @@ type transport struct {
 }
 
 func processRequest(request *http.Request) (*http.Request, error) {
-	fmt.Print("\n\nREQUEST\n")
-	fmt.Println("url: ", request.URL)
-	fmt.Println("method: ", request.Method)
+	fmt.Print("\nREQUEST\n")
+	fmt.Println(request.Method, request.URL)
+	request.Header.Write(os.Stdout)
 
 	if request.Body != nil {
 		reqB, err := ioutil.ReadAll(request.Body)
@@ -30,9 +31,9 @@ func processRequest(request *http.Request) (*http.Request, error) {
 			return nil, err
 		}
 
-		fmt.Println("begin request body")
+		fmt.Print("\nREQUEST BODY\n")
 		fmt.Println(string(reqB))
-		fmt.Println("end request body")
+		fmt.Print("\n")
 
 		request.Body = ioutil.NopCloser(bytes.NewReader(reqB))
 	}
@@ -50,11 +51,11 @@ func processResponse(response *http.Response) (*http.Response, error) {
 		return nil, err
 	}
 
-	fmt.Print("\n\nRESPONSE\n")
-	fmt.Println("status code: ", response.StatusCode)
-	fmt.Println("begin response body")
+	fmt.Print("\nRESPONSE\n")
+	response.Header.Write(os.Stdout)
+	fmt.Print("\nRESPONSE BODY\n")
 	fmt.Println(string(respB))
-	fmt.Println("end response body")
+	fmt.Print("\n")
 
 	body := ioutil.NopCloser(bytes.NewReader(respB))
 
