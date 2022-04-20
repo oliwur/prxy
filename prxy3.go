@@ -15,17 +15,17 @@ type transport struct {
 	http.RoundTripper
 }
 
-func (t *transport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
+func printRequestInfo(request *http.Request) (*http.Request, error) {
 	fmt.Println("******* request *******")
-	fmt.Println("url: ", req.URL)
-	fmt.Println("method: ", req.Method)
+	fmt.Println("url: ", request.URL)
+	fmt.Println("method: ", request.Method)
 
-	if req.Body != nil {
-		reqB, err := ioutil.ReadAll(req.Body)
+	if request.Body != nil {
+		reqB, err := ioutil.ReadAll(request.Body)
 		if err != nil {
 			return nil, err
 		}
-		err = req.Body.Close()
+		err = request.Body.Close()
 		if err != nil {
 			return nil, err
 		}
@@ -34,10 +34,20 @@ func (t *transport) RoundTrip(req *http.Request) (resp *http.Response, err error
 		fmt.Println(string(reqB))
 		fmt.Println("end request body")
 
-		req.Body = ioutil.NopCloser(bytes.NewReader(reqB))
+		request.Body = ioutil.NopCloser(bytes.NewReader(reqB))
+	}
+
+	return request, nil
+}
+
+func (t *transport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
+	req, err = printRequestInfo(req)
+	if err != nil {
+		return nil, err
 	}
 
 	resp, err = t.RoundTripper.RoundTrip(req)
+
 	if err != nil {
 		return nil, err
 	}

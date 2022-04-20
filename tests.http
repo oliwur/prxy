@@ -9,3 +9,23 @@ Accept: text/html
 hello world
 
 ###
+
+GET http://localhost:9090/
+Accept: text/plain
+
+###
+
+POST http://localhost:9090/
+Accept: text/plain
+
+hello world
+
+###
+
+GET http://localhost:8080/
+Accept: text/plain
+
+###
+
+GET http://localhost:8765/
+Accept: text/plain
