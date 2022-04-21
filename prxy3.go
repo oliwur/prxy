@@ -52,6 +52,7 @@ func processResponse(response *http.Response) (*http.Response, error) {
 	}
 
 	fmt.Print("\nRESPONSE\n")
+	fmt.Println(response.Proto, response.Status)
 	response.Header.Write(os.Stdout)
 	fmt.Print("\nRESPONSE BODY\n")
 	fmt.Println(string(respB))
