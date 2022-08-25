@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -22,7 +22,7 @@ func processRequest(request *http.Request) (*http.Request, error) {
 	request.Header.Write(os.Stdout)
 
 	if request.Body != nil {
-		reqB, err := ioutil.ReadAll(request.Body)
+		reqB, err := io.ReadAll(request.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -35,14 +35,14 @@ func processRequest(request *http.Request) (*http.Request, error) {
 		fmt.Println(string(reqB))
 		fmt.Print("\n")
 
-		request.Body = ioutil.NopCloser(bytes.NewReader(reqB))
+		request.Body = io.NopCloser(bytes.NewReader(reqB))
 	}
 
 	return request, nil
 }
 
 func processResponse(response *http.Response) (*http.Response, error) {
-	respB, err := ioutil.ReadAll(response.Body)
+	respB, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func processResponse(response *http.Response) (*http.Response, error) {
 	fmt.Println(string(respB))
 	fmt.Print("\n")
 
-	body := ioutil.NopCloser(bytes.NewReader(respB))
+	body := io.NopCloser(bytes.NewReader(respB))
 
 	response.Body = body
 	response.ContentLength = int64(len(respB))
